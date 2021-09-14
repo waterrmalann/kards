@@ -30,7 +30,7 @@ npm run serve
 ### To-Do
 
 - **Add persistent local storage.**
-- **Allow item names to be edited.**
+- ~~Allow item names to be edited.~~
 - Add card settings context menu.
     - Delete
     - Duplicate

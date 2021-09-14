@@ -187,7 +187,7 @@ class Card {
 
         //  <div class="parent-card">
         //    <span>
-        //        <h2 contentEditable="true">
+        //        <h2>
         //            {this.name}
         //        </h2>
         //        <i class="fa fa-bars" aria-hidden="true"></i>
@@ -205,9 +205,29 @@ class Card {
 
         let _newCardHeader = document.createElement('span');
         let _newCardHeaderTitle = document.createElement('h2');
-        _newCardHeaderTitle.contentEditable = true;
         _newCardHeaderTitle.innerText = this.name;
-        _newCardHeaderTitle.addEventListener('input', () => this.name = _newCardHeaderTitle.innerText);
+        _newCardHeaderTitle.classList.add('text-fix', 'card-title');
+        //_newCardHeaderTitle.contentEditable = true;
+        //_newCardHeaderTitle.addEventListener('input', () => this.name = _newCardHeaderTitle.innerText);
+        // A better, more flexible alternative to contentEditable.
+        // We replace the text element with an input element.
+        _newCardHeaderTitle.addEventListener('click', (e) => {
+            let _input = document.createElement('input');
+            _input.value = _newCardHeaderTitle.textContent;
+            _input.classList.add('card-title');
+            _input.maxLength = 128;
+            _newCardHeaderTitle.replaceWith(_input);
+
+            let _save = () => {
+                this.name = _input.value;
+                regenerateElements();
+            };
+
+            _input.addEventListener('blur', _save, {
+                once: true,
+            });
+            _input.focus();
+        });
 
         // Hamburger menu icon next to card title to enter card's context menu.
         // *Feature not complete yet.*
@@ -253,7 +273,8 @@ class Card {
                 // Item Title
                 let _newItemTitle = document.createElement('p');
                 _newItemTitle.innerText = _item.title;
-
+                _newItemTitle.classList.add('item-title', 'text-fix');
+                
                 // Housing for the edit and delete buttons.
                 let _newItemButtons = document.createElement('span');
 
@@ -262,7 +283,23 @@ class Card {
                 _newItemEditButton.ariaHidden = true;
                 _newItemEditButton.classList.add('fa', 'fa-pencil');
                 _newItemEditButton.addEventListener('click', () => {
-                    console.log("TODO Edit");
+                    
+                    // Card item editing functionality.
+                    let _input = document.createElement('textarea');
+                    _input.value = _newItemTitle.textContent;
+                    _input.classList.add('item-title');
+                    _input.maxLength = 256;
+                    _newItemTitle.replaceWith(_input);
+
+                    let _save = () => {
+                        _item.title = _input.value;
+                        regenerateElements();
+                    };
+
+                    _input.addEventListener('blur', _save, {
+                        once: true,
+                    });
+                    _input.focus();
                 });
 
                 // Delete button. ALlows the user to delete the item from the card.
@@ -454,4 +491,5 @@ e_mainContainer.addEventListener('mouseleave', scroll_stopDragging, false);
 e_addCardText.addEventListener('keyup', (e) => {
     if (e.code === "Enter") addCard();
 });
+
 e_addCardButton.addEventListener('click', addCard);

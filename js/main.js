@@ -222,6 +222,9 @@ class Card {
         _newInput.type = 'text';
         _newInput.name = "add-todo-text";
         _newInput.placeholder = "Add Task...";
+        _newInput.addEventListener('keyup', (e) => {
+            if (e.code === "Enter") _newButton.click();
+        });
 
         // Button next to input to convert the text from the _newInput into an actual item in the card.
         let _newButton = document.createElement('button');
@@ -259,7 +262,7 @@ class Card {
                 _newItemEditButton.ariaHidden = true;
                 _newItemEditButton.classList.add('fa', 'fa-pencil');
                 _newItemEditButton.addEventListener('click', () => {
-                    console.log("TODO Edit")
+                    console.log("TODO Edit");
                 });
 
                 // Delete button. ALlows the user to delete the item from the card.
@@ -305,7 +308,7 @@ const cardDrag_update = (e) => {
     // This simulates the effect of the card being grabbed by the cursor.
     cardDrag_mouseDownOn.style.left = e.pageX + 'px';
     cardDrag_mouseDownOn.style.top = e.pageY + 'px';
-}
+};
 
 const cardDrag_startDragging = (e) => {
 
@@ -406,7 +409,7 @@ const cardDrag_stopDragging = (e) => {
     cardDrag_mouseDown = false;
     cardDrag_mouseDownOn.style.position = 'static';
     cardDrag_mouseDownOn = null;
-}
+};
 
 // Adding the event listeners.
 // NOTE03: It would be a better idea to make a single mouseMove/mouseLeave/mouseUp function
@@ -439,7 +442,7 @@ const scroll_update = (e) => {
 
     let _scroll = (e.pageX - e_mainContainer.offsetLeft) - scroll_startX;
     e_mainContainer.scrollLeft = scroll_scrollLeft - _scroll;
-}
+};
 
 // Add the event listeners
 e_mainContainer.addEventListener('mousemove', scroll_update);
@@ -448,4 +451,7 @@ e_mainContainer.addEventListener('mouseup', scroll_stopDragging, false);
 e_mainContainer.addEventListener('mouseleave', scroll_stopDragging, false);
 
 /* <=================================== Other Events ===================================> */
+e_addCardText.addEventListener('keyup', (e) => {
+    if (e.code === "Enter") addCard();
+});
 e_addCardButton.addEventListener('click', addCard);

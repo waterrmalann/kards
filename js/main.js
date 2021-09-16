@@ -1,13 +1,47 @@
 "use strict";
 
+console.log("╦╔═┌─┐┬─┐┌┬┐┌─┐");
+console.log("╠╩╗├─┤├┬┘ ││└─┐");
+console.log("╩ ╩┴ ┴┴└──┴┘└─┘");
+console.log("Alan | V1.5 2021")
+
 /* <=================================== Elements / Variables ===================================> */
 const e_mainContainer = document.getElementById('main-container');
 const e_cardsContainer = document.getElementById('cards-container');
 
+const e_sidebar = document.getElementById('sidebar');
+const e_sidebarButton = document.getElementById('sidebar-button');
+const e_sidebarClose = document.getElementById('sidebar-close');
+
 const e_addCardText = document.getElementById('add-card-text');
 const e_addCardButton = document.getElementById('add-card-button');
 
-var cards = []; // All the cards that are currently in the container as Card objects.
+const e_boardsList = document.getElementById('boards-list');
+const e_addBoardText = document.getElementById('add-board-text');
+const e_addBoardButton = document.getElementById('add-board-button');
+
+const e_saveButton = document.getElementById('save-button');
+const e_settingsButton = document.getElementById('settings-button');
+
+const e_title = document.getElementById('title');
+
+var appData = {
+    'boards': [],
+    'settings': {
+        'userName': "User",
+        //[not yet] 'defaultTheme': "blue",
+        'dataPersistence': true
+    },
+    'currentBoard': 0  // The index of the currently open board.
+};
+
+function currentCards() {
+    return appData.boards[appData.currentBoard].cards;
+}
+
+function currentBoard() {
+    return appData.boards[appData.currentBoard];
+}
 
 /* <=================================== Extensions ===================================> */
 Array.prototype.move = function(from, to) {
@@ -16,7 +50,7 @@ Array.prototype.move = function(from, to) {
     this.splice(to, 0, this.splice(from, 1)[0]);
 };
 
-Array.prototype.insert = function (index, item) {
+Array.prototype.insert = function(index, item) {
     /* Insert an item to a specific index of the array. */
 
     this.splice( index, 0, item );
@@ -26,7 +60,7 @@ Array.prototype.insert = function (index, item) {
 var currentID = 0;
 function uniqueID() {
     currentID += 1;
-    return currentID.toString();
+    return 'b' + currentID.toString();
 }
 
 function getMouseOverCard() {
@@ -42,7 +76,7 @@ function getMouseOverItem() {
 function getItemFromElement(element) {
     /* Get an Item object from a list item element. */
 
-    for (let _card of cards) {
+    for (let _card of currentCards()) {
         for (let _item of _card.items) {
             if (_item.id === element.id) {
                 return _item;
@@ -54,7 +88,38 @@ function getItemFromElement(element) {
 function getCardFromElement(element) {
     /* Get a Card object from a card div element. */
 
-    return cards.find(e => e.id === element.id);
+    return currentCards().find(e => e.id === element.id);
+}
+
+function getBoardFromId(id) {
+    /* Get a board object from its unique id. */
+
+    return appData.boards.find(_b => _b.id === id);
+}
+
+function listBoards() {
+    /* List all the boards in the sidebar. */
+
+    e_boardsList.innerHTML = '';
+    for (let _board of appData.boards) {
+        let _boardTitle = document.createElement('li');
+        _boardTitle.innerText = _board.name;
+        if (_board.id === currentBoard().id) _boardTitle.classList.add('is-active');
+        _boardTitle.addEventListener('click', () => {
+            generateBoard(_board);
+            listBoards();
+        });
+        e_boardsList.appendChild(_boardTitle);
+    }
+}
+
+function generateBoard(board) {
+    appData.currentBoard = appData.boards.indexOf(board);
+    document.title = 'Kards | ' + currentBoard().name;
+    e_title.innerText = currentBoard().name;
+    //e_title.addEventListener('click'), allow editing board name
+    // TODO: set theme
+    regenerateElements();
 }
 
 function regenerateElements() {
@@ -65,8 +130,7 @@ function regenerateElements() {
         // Remove all the cards from the cards container.
         _card.remove();
     }
-    for (let _card of cards) {
-
+    for (let _card of currentCards()) {
         // Regenerate each card.
         let _generated = _card.generateElement();
         // Put them in the container right before the last child (text box for new card).
@@ -98,18 +162,16 @@ function setHoverStyle(show) {
     }
 }
 
-function addCard() {
-    let _cardTitle = e_addCardText.value;
-    e_addCardText.value = '';
+function addBoard() {
+    /* Adds a new board based on the input in the sidebar. */
 
-    // If the user pressed the button without typing any name, we'll default to "Untitled Card {card length +1}"
-    if (!_cardTitle) _cardTitle = `Untitled Card ${cards.length + 1}`;
+    let _boardTitle = e_addBoardText.value;
+    if (!_boardTitle) return;  // We don't create a board if it has no name.
+    e_addBoardText.value = '';
 
-    let _card = new Card(_cardTitle, uniqueID());
-    cards.push(_card);
-    let _newCard = _card.generateElement();
-
-    e_cardsContainer.insertBefore(_newCard, e_cardsContainer.childNodes[e_cardsContainer.childNodes.length - 2]);
+    let _newBoard = new Board(_boardTitle, uniqueID(), {'theme': null});
+    appData.boards.push(_newBoard);
+    listBoards();
 }
 
 /* <=================================== Classes ===================================> */
@@ -159,10 +221,11 @@ class Item {
 
 class Card {
 
-    constructor(name, id) {
+    constructor(name, id, parentBoardId) {
         this.name = name;
         this.items = [];
         this.id = id;
+        this.parentBoardId = parentBoardId;
     }
 
     addItem(item) {
@@ -251,7 +314,9 @@ class Card {
         _newButton.classList.add("plus-button");
         _newButton.innerText = '+';
         _newButton.addEventListener('click', () => {
-            let _item = new Item(_newInput.value, null, uniqueID(), this.id);
+            let _inputValue = _newInput.value;
+            if (!_inputValue) return;
+            let _item = new Item(_inputValue, null, getBoardFromId(this.parentBoardId).uniqueID(), this.id);
             this.addItem(_item);
             _newInput.value = '';
         });
@@ -261,7 +326,6 @@ class Card {
         _newCard.classList.add('parent-card');
         _newCard.appendChild(_newCardHeader);
 
-        
         if (this.items) {
             // If the card has items in it.
 
@@ -273,7 +337,7 @@ class Card {
                 // Item Title
                 let _newItemTitle = document.createElement('p');
                 _newItemTitle.innerText = _item.title;
-                _newItemTitle.classList.add('item-title', 'text-fix');
+                _newItemTitle.classList.add('item-title', 'text-fix', 'unselectable');
                 
                 // Housing for the edit and delete buttons.
                 let _newItemButtons = document.createElement('span');
@@ -329,6 +393,36 @@ class Card {
         _newCard.appendChild(_newButton);
 
         return _newCard;
+    }
+}
+
+class Board {
+
+    constructor(name, id, settings, identifier=0) {
+        this.name = name;
+        this.id = id;
+        this.settings = settings;
+        this.cards = [];  // All the cards that are currently in the container as Card objects.
+        this.identifier = identifier;  // All elements within this board will carry an unqiue id.
+    }
+
+    uniqueID() {
+        this.identifier += 1;
+        return 'e' + this.identifier.toString();
+    }
+
+    addCard() {
+        let _cardTitle = e_addCardText.value;
+        e_addCardText.value = '';
+    
+        // If the user pressed the button without typing any name, we'll default to "Untitled Card {cards length +1}"
+        if (!_cardTitle) _cardTitle = `Untitled Card ${this.cards.length + 1}`;
+    
+        let _card = new Card(_cardTitle, this.uniqueID(), this.id);
+        this.cards.push(_card);
+
+        let _newCard = _card.generateElement();
+        e_cardsContainer.insertBefore(_newCard, e_cardsContainer.childNodes[e_cardsContainer.childNodes.length - 2]);
     }
 }
 
@@ -396,7 +490,6 @@ const cardDrag_stopDragging = (e) => {
                     // This check is in place because there is a chance that the '_hoverItem' ends up being the item being held.
                     // This hasn't actually happened to me yet but I've sort of emulated it, so I know that it could happen under certain circumstances.
                     // I haven't around to fixing this yet primarily because it is extremely rare, and doesn't affect the functioning of the app.
-
                     let _hoverItemObject = getItemFromElement(_hoverItem);
                     // Move the position of the held item to the position of whichever item was hovered over.
                     // This will push the item that was hovered over down, with the item that was being held taking its place.
@@ -487,9 +580,82 @@ e_mainContainer.addEventListener('mousedown', scroll_startDragging, false);
 e_mainContainer.addEventListener('mouseup', scroll_stopDragging, false);
 e_mainContainer.addEventListener('mouseleave', scroll_stopDragging, false);
 
+/* <=================================== Persistent Data Storage ===================================> */
+function saveData() {
+    window.localStorage.setItem('appData', JSON.stringify(appData));
+}
+
+function loadData() {
+    let _data = window.localStorage.getItem('appData');
+    if (_data) {
+        let _appData = JSON.parse(_data);
+
+        // Since JSON doesn't store functions and such.
+        // We'll have to reinitailize the classes with the loaded data.
+        appData.settings = _appData.settings;
+        appData.currentBoard = _appData.currentBoard;
+        
+        // Fill the data with boards.
+        for (let _board of _appData.boards) {
+            let _newBoard = new Board(_board.name, _board.id, _board.settings, _board.identifier);
+
+            // Fill the board with cards.
+            for (let _card of _board.cards) {
+                let _newCard = new Card(_card.name, _card.id, _board.id);
+
+                // Fill the cards with items.
+                for (let _item of _card.items) {
+                    let _newItem = new Item(_item.title, _item.description, _item.id, _card.id);
+                    // Push the item into the card.
+                    _newCard.items.push(_newItem);
+                }
+                // Push the card into the board.
+                _newBoard.cards.push(_newCard);
+            }
+            // Push the board into app data.
+            appData.boards.push(_newBoard);
+        }
+
+        // Generate the board.
+        generateBoard(appData.boards[appData.currentBoard]);
+    } else {
+        let defaultBoard = new Board("Untitled Board", 0, {'theme': null});
+        appData.boards.push(defaultBoard);
+    }
+    listBoards();
+}
+
+function clearData() {
+    window.localStorage.clear();
+}
+
+loadData();
+
 /* <=================================== Other Events ===================================> */
 e_addCardText.addEventListener('keyup', (e) => {
-    if (e.code === "Enter") addCard();
+    if (e.code === "Enter") currentBoard().addCard();
 });
 
-e_addCardButton.addEventListener('click', addCard);
+e_addCardButton.addEventListener('click', () => currentBoard().addCard());
+
+e_addBoardText.addEventListener('keyup', (e) => {
+    if (e.code === "Enter") addBoard();
+});
+
+e_addBoardButton.addEventListener('click', addBoard);
+
+e_saveButton.addEventListener('click', saveData);
+
+/* <=================================== Sidebar ===================================> */
+function toggleSidebar() {
+    if (('toggled' in e_sidebar.dataset)) {
+        delete e_sidebar.dataset.toggled;
+        e_sidebar.style.width = "0";
+    } else {
+        e_sidebar.dataset.toggled = '';
+        e_sidebar.style.width = "250px";
+    }
+}
+
+e_sidebarButton.addEventListener('click', toggleSidebar);
+e_sidebarClose.addEventListener('click', toggleSidebar);

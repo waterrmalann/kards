@@ -1,7 +1,11 @@
 {
   "name": "kards",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "description": "A simple cards-based kanban board web app inspired by Trello.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/waterrmalann/kards.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

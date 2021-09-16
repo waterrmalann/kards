@@ -29,8 +29,9 @@ npm run serve
 
 ### To-Do
 
-- **Add persistent local storage.**
+- ~~Add persistent local storage.~~
 - ~~Allow item names to be edited.~~
+- ~~Allow the user to create multiple boards.~~
 - Add card settings context menu.
     - Delete
     - Duplicate
@@ -40,7 +41,6 @@ npm run serve
     - Allow the user to enable or disable data persistence.
     - Allow the user to download the board as `.csv` or `.json`.
     - Allow the user to load a `.csv` or `.json` file.
-- Allow the user to create multiple boards.
 - Organize and improve the code.
 - Allow the cards to keep more information like description and checklists.
 

@@ -32,7 +32,8 @@ var appData = {
         //[not yet] 'defaultTheme': "blue",
         'dataPersistence': true
     },
-    'currentBoard': 0  // The index of the currently open board.
+    'currentBoard': 0,  // The index of the currently open board.
+    'identifier': 0
 };
 
 function currentCards() {
@@ -57,10 +58,9 @@ Array.prototype.insert = function(index, item) {
 };
 
 /* <=================================== Utility Functions ===================================> */
-var currentID = 0;
 function uniqueID() {
-    currentID += 1;
-    return 'b' + currentID.toString();
+    appData.identifier += 1;
+    return 'b' + appData.identifier;
 }
 
 function getMouseOverCard() {
@@ -104,25 +104,26 @@ function listBoards() {
     for (let _board of appData.boards) {
         let _boardTitle = document.createElement('li');
         _boardTitle.innerText = _board.name;
+        _boardTitle.id = _board.id;
         if (_board.id === currentBoard().id) _boardTitle.classList.add('is-active');
         _boardTitle.addEventListener('click', () => {
-            generateBoard(_board);
+            renderBoard(_board);
             listBoards();
         });
         e_boardsList.appendChild(_boardTitle);
     }
 }
 
-function generateBoard(board) {
+function renderBoard(board) {
     appData.currentBoard = appData.boards.indexOf(board);
     document.title = 'Kards | ' + currentBoard().name;
     e_title.innerText = currentBoard().name;
     //e_title.addEventListener('click'), allow editing board name
     // TODO: set theme
-    regenerateElements();
+    renderCards();
 }
 
-function regenerateElements() {
+function renderCards() {
     /* Refreshes the whole cards container. */
 
     for (let _card of e_cardsContainer.querySelectorAll('.parent-card')) {
@@ -132,7 +133,7 @@ function regenerateElements() {
     }
     for (let _card of currentCards()) {
         // Regenerate each card.
-        let _generated = _card.generateElement();
+        let _generated = _card.renderCard();
         // Put them in the container right before the last child (text box for new card).
         e_cardsContainer.insertBefore(_generated, e_cardsContainer.childNodes[e_cardsContainer.childNodes.length - 2]);
         // Update the card for event listeners and etc...
@@ -230,12 +231,12 @@ class Card {
 
     addItem(item) {
         this.items.push(item);
-        regenerateElements();
+        renderCards();
     }
 
     removeItem(item) {
         this.items = this.items.filter(val => val !== item);
-        regenerateElements();
+        renderCards();
     }
 
     update() {
@@ -244,7 +245,7 @@ class Card {
         }
     }
 
-    generateElement() {
+    renderCard() {
 
         /* The structure of the card element. */
 
@@ -283,7 +284,7 @@ class Card {
 
             let _save = () => {
                 this.name = _input.value;
-                regenerateElements();
+                renderCards();
             };
 
             _input.addEventListener('blur', _save, {
@@ -357,7 +358,7 @@ class Card {
 
                     let _save = () => {
                         _item.title = _input.value;
-                        regenerateElements();
+                        renderCards();
                     };
 
                     _input.addEventListener('blur', _save, {
@@ -421,7 +422,7 @@ class Board {
         let _card = new Card(_cardTitle, this.uniqueID(), this.id);
         this.cards.push(_card);
 
-        let _newCard = _card.generateElement();
+        let _newCard = _card.renderCard();
         e_cardsContainer.insertBefore(_newCard, e_cardsContainer.childNodes[e_cardsContainer.childNodes.length - 2]);
     }
 }
@@ -534,7 +535,7 @@ const cardDrag_stopDragging = (e) => {
                 _heldItemObject.parentCardId = _hoverCardObject.id;
             }
         }
-        regenerateElements();
+        renderCards();
     }
     cardDrag_mouseDown = false;
     cardDrag_mouseDownOn.style.position = 'static';
@@ -594,6 +595,7 @@ function loadData() {
         // We'll have to reinitailize the classes with the loaded data.
         appData.settings = _appData.settings;
         appData.currentBoard = _appData.currentBoard;
+        appData.identifier = _appData.identifier;
         
         // Fill the data with boards.
         for (let _board of _appData.boards) {
@@ -617,9 +619,9 @@ function loadData() {
         }
 
         // Generate the board.
-        generateBoard(appData.boards[appData.currentBoard]);
+        renderBoard(appData.boards[appData.currentBoard]);
     } else {
-        let defaultBoard = new Board("Untitled Board", 0, {'theme': null});
+        let defaultBoard = new Board("Untitled Board", 'b0', {'theme': null});
         appData.boards.push(defaultBoard);
     }
     listBoards();

@@ -141,25 +141,25 @@ function renderCards() {
     }
 }
 
-function setHoverStyle(show) {
+function toggleHoverStyle(show) {
     /* Sets whether hovering over cards/items changes their colors or not. */
 
     if (show) {
 
         // Create a new style element.
-        let hoverStyle = document.createElement('style');
-        hoverStyle.id = "dragHover";
+        let _hoverStyle = document.createElement('style');
+        _hoverStyle.id = "dragHover";
 
         // Card and item should turn slightly darker when move over.
         // This gives a visual feedback that makes it easier for the user to know positions during drag and drop.
-        hoverStyle.innerHTML = ".parent-card:hover {background-color: #c7cbd1;}.parent-card > ul > li:hover {background-color: #d1d1d1;}";
-        document.body.appendChild(hoverStyle);
+        _hoverStyle.innerHTML = ".parent-card:hover {background-color: #c7cbd1;}.parent-card > ul > li:hover {background-color: #d1d1d1;}";
+        document.body.appendChild(_hoverStyle);
     } else {
 
         // Get rid of the style element.
         // This effectively prevents the elements from turning darker on hover.
-        let hoverStyle = document.getElementById('dragHover');
-        hoverStyle.parentNode.removeChild(hoverStyle);
+        let _hoverStyle = document.getElementById('dragHover');
+        _hoverStyle.parentNode.removeChild(_hoverStyle);
     }
 }
 
@@ -245,6 +245,66 @@ class Card {
         }
     }
 
+    renderItems() {
+        let _newItemList = document.createElement('ul');
+        _newItemList.id = this.id + '-ul';
+        for (let _item of this.items) {
+            let _newItem = document.createElement('li');
+            _newItem.id = _item.id;
+            
+            // Item Title
+            let _newItemTitle = document.createElement('p');
+            _newItemTitle.innerText = _item.title;
+            _newItemTitle.classList.add('item-title', 'text-fix', 'unselectable');
+            
+            // Housing for the edit and delete buttons.
+            let _newItemButtons = document.createElement('span');
+
+            // Edit button. Allows the user to rename the item.
+            let _newItemEditButton = document.createElement('i');
+            _newItemEditButton.ariaHidden = true;
+            _newItemEditButton.classList.add('fa', 'fa-pencil');
+            _newItemEditButton.addEventListener('click', () => {
+                
+                // Card item editing functionality.
+                let _input = document.createElement('textarea');
+                _input.value = _newItemTitle.textContent;
+                _input.classList.add('item-title');
+                _input.maxLength = 256;
+                _newItemTitle.replaceWith(_input);
+
+                let _save = () => {
+                    _item.title = _input.value;
+                    renderCards();
+                };
+
+                _input.addEventListener('blur', _save, {
+                    once: true,
+                });
+                _input.focus();
+            });
+
+            // Delete button. ALlows the user to delete the item from the card.
+            let _newItemDeleteButton = document.createElement('i');
+            _newItemDeleteButton.ariaHidden = true;
+            _newItemDeleteButton.classList.add('fa', 'fa-trash');
+            _newItemDeleteButton.addEventListener('click', () => {
+                this.removeItem(_item);
+            });
+
+            // Add both the buttons to the span tag.
+            _newItemButtons.appendChild(_newItemEditButton);
+            _newItemButtons.appendChild(_newItemDeleteButton);
+
+            // Add the title, span tag to the item and the item itself to the list.
+            _newItem.appendChild(_newItemTitle);
+            _newItem.appendChild(_newItemButtons);
+            _newItemList.appendChild(_newItem);
+        }
+
+        return _newItemList;
+    }
+
     renderCard() {
 
         /* The structure of the card element. */
@@ -269,6 +329,7 @@ class Card {
 
         let _newCardHeader = document.createElement('span');
         let _newCardHeaderTitle = document.createElement('h2');
+        _newCardHeaderTitle.id = this.id + '-h2';
         _newCardHeaderTitle.innerText = this.name;
         _newCardHeaderTitle.classList.add('text-fix', 'card-title');
         //_newCardHeaderTitle.contentEditable = true;
@@ -303,6 +364,7 @@ class Card {
 
         // Input area for typing in the name of new tasks for the card.
         let _newInput = document.createElement('input');
+        _newInput.id = this.id + '-input';
         _newInput.type = 'text';
         _newInput.name = "add-todo-text";
         _newInput.placeholder = "Add Task...";
@@ -312,6 +374,7 @@ class Card {
 
         // Button next to input to convert the text from the _newInput into an actual item in the card.
         let _newButton = document.createElement('button');
+        _newButton.id = this.id + '-button';
         _newButton.classList.add("plus-button");
         _newButton.innerText = '+';
         _newButton.addEventListener('click', () => {
@@ -320,6 +383,7 @@ class Card {
             let _item = new Item(_inputValue, null, getBoardFromId(this.parentBoardId).uniqueID(), this.id);
             this.addItem(_item);
             _newInput.value = '';
+            _newInput.focus(); // wont because the card is being re-rendered
         });
 
         let _newCard = document.createElement('div');
@@ -330,60 +394,8 @@ class Card {
         if (this.items) {
             // If the card has items in it.
 
-            let _newItemList = document.createElement('ul');
-            for (let _item of this.items) {
-                let _newItem = document.createElement('li');
-                _newItem.id = _item.id;
-                
-                // Item Title
-                let _newItemTitle = document.createElement('p');
-                _newItemTitle.innerText = _item.title;
-                _newItemTitle.classList.add('item-title', 'text-fix', 'unselectable');
-                
-                // Housing for the edit and delete buttons.
-                let _newItemButtons = document.createElement('span');
-
-                // Edit button. Allows the user to rename the item.
-                let _newItemEditButton = document.createElement('i');
-                _newItemEditButton.ariaHidden = true;
-                _newItemEditButton.classList.add('fa', 'fa-pencil');
-                _newItemEditButton.addEventListener('click', () => {
-                    
-                    // Card item editing functionality.
-                    let _input = document.createElement('textarea');
-                    _input.value = _newItemTitle.textContent;
-                    _input.classList.add('item-title');
-                    _input.maxLength = 256;
-                    _newItemTitle.replaceWith(_input);
-
-                    let _save = () => {
-                        _item.title = _input.value;
-                        renderCards();
-                    };
-
-                    _input.addEventListener('blur', _save, {
-                        once: true,
-                    });
-                    _input.focus();
-                });
-
-                // Delete button. ALlows the user to delete the item from the card.
-                let _newItemDeleteButton = document.createElement('i');
-                _newItemDeleteButton.ariaHidden = true;
-                _newItemDeleteButton.classList.add('fa', 'fa-trash');
-                _newItemDeleteButton.addEventListener('click', () => {
-                    this.removeItem(_item);
-                });
-
-                // Add both the buttons to the span tag.
-                _newItemButtons.appendChild(_newItemEditButton);
-                _newItemButtons.appendChild(_newItemDeleteButton);
-
-                // Add the title, span tag to the item and the item itself to the list.
-                _newItem.appendChild(_newItemTitle);
-                _newItem.appendChild(_newItemButtons);
-                _newItemList.appendChild(_newItem);
-            }
+            // Render the items of the card.
+            let _newItemList = this.renderItems();
 
             // Add the list to the card.
             _newCard.appendChild(_newItemList);
@@ -457,7 +469,7 @@ const cardDrag_startDragging = (e) => {
     cardDrag_mouseDownOn.style.position = 'absolute';
 
     // Enable hover style css, which makes other cards and items darker when hovered over.
-    setHoverStyle(true);
+    toggleHoverStyle(true);
 };
 
 const cardDrag_stopDragging = (e) => {
@@ -466,7 +478,7 @@ const cardDrag_stopDragging = (e) => {
     if (!cardDrag_mouseDown) return;
 
     // Disable hover style css, which prevents cards and items from getting darker when hovered over.
-    setHoverStyle(false);
+    toggleHoverStyle(false);
 
     let _hoverCard = getMouseOverCard();
     if (_hoverCard) {

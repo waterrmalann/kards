@@ -2,15 +2,17 @@
 
 <img alt="HTML5" src="https://img.shields.io/badge/html5%20-%23E34F26.svg?&style=for-the-badge&logo=html5&logoColor=white"/> <img alt="CSS" src="https://img.shields.io/badge/css3%20-%231572B6.svg?&style=for-the-badge&logo=css3&logoColor=white"/> <img alt="JavaScript" src="https://img.shields.io/badge/javascript%20-%23323330.svg?&style=for-the-badge&logo=javascript&logoColor=%23F7DF1E"/>
 
-## [Demo](http://alanvarghese.me/projects/kards/app.html)   |   [Source](https://github.com/waterrmalann/kards/blob/main/js/main.js)
+## [Demo](https://waterrmalann.github.io/kards/)   |   [Source](https://github.com/waterrmalann/kards/blob/main/js/main.js)
 
-A simple cards-based kanban board web app heavily inspired by Trello, the UI is also pretty similar to that of Trello. You can add as many cards as you want with each card having the ability to hold any number of items or tasks. The items support drag and drop between cards as well as within the same card to reorder. This project was written in HTML, CSS, and pure vanilla JavaScript with no external dependencies.
+A simple cards-based kanban board web app heavily inspired by Trello, the UI is also pretty similar to that of Trello. You can create upto 512 unique kanban boards with different names, which holds cards. Each card can hold an unlimited number of items/tasks each. All items support drag and drop between cards as well as within the same card to reoder. All data is stored locally on the computer by the browser. This whole project was written in HTML, CSS, and pure vanilla JavaScript with no external dependencies.
+
+![Screenshot](screenshot.jpg)
 
 ---
 
 ### Setup
 
-A live version is hosted on my personal portfolio at this [link](http://alanvarghese.me/projects/kards/app.html). If you wish to modify it, you can clone the repo and do whatever you want with it.
+A live version of the web app is available on my github pages [here](https://waterrmalann.github.io/kards/). Another version (could be outdated) is hosted on my personal portfolio at this [link](http://alanvarghese.me/projects/kards/app.html). If you wish to modify the app or host it yourself, you can clone the repo and do whatever you want with it.
 
 1. [Clone the repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github/cloning-a-repository).
 ```
@@ -33,6 +35,8 @@ npm run serve
 - ~~Allow item names to be edited.~~
 - ~~Allow the user to create multiple boards.~~
 - Add card settings context menu.
+- Replace normal alerts with dynamic pop up alerts.
+- Allow items to hold images.
     - Delete
     - Duplicate
     - Move (to another board)
@@ -42,6 +46,7 @@ npm run serve
     - Allow the user to download the board as `.csv` or `.json`.
     - Allow the user to load a `.csv` or `.json` file.
 - Organize and improve the code.
+- Performance optimizations.
 - Allow the cards to keep more information like description and checklists.
 
 ### Contribution

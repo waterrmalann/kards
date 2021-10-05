@@ -22,6 +22,7 @@ const e_addBoardButton = document.getElementById('add-board-button');
 
 const e_saveButton = document.getElementById('save-button');
 const e_settingsButton = document.getElementById('settings-button');
+const e_deleteButton = document.getElementById('delete-button');
 
 const e_title = document.getElementById('title');
 
@@ -167,7 +168,8 @@ function addBoard() {
     /* Adds a new board based on the input in the sidebar. */
 
     let _boardTitle = e_addBoardText.value;
-    if (!_boardTitle) return;  // We don't create a board if it has no name.
+    if (!_boardTitle) return alert("Type a name for the board!");  // We don't create a board if it has no name.
+    if (appData.boards.length >= 512) return alert("Max limit for boards reached.")  // or if there are already too many boards
     e_addBoardText.value = '';
 
     let _newBoard = new Board(_boardTitle, uniqueID(), {'theme': null});
@@ -332,8 +334,7 @@ class Card {
         _newCardHeaderTitle.id = this.id + '-h2';
         _newCardHeaderTitle.innerText = this.name;
         _newCardHeaderTitle.classList.add('text-fix', 'card-title');
-        //_newCardHeaderTitle.contentEditable = true;
-        //_newCardHeaderTitle.addEventListener('input', () => this.name = _newCardHeaderTitle.innerText);
+
         // A better, more flexible alternative to contentEditable.
         // We replace the text element with an input element.
         _newCardHeaderTitle.addEventListener('click', (e) => {
@@ -365,6 +366,7 @@ class Card {
         // Input area for typing in the name of new tasks for the card.
         let _newInput = document.createElement('input');
         _newInput.id = this.id + '-input';
+        _newInput.maxLength = 256;
         _newInput.type = 'text';
         _newInput.name = "add-todo-text";
         _newInput.placeholder = "Add Task...";
@@ -379,7 +381,7 @@ class Card {
         _newButton.innerText = '+';
         _newButton.addEventListener('click', () => {
             let _inputValue = _newInput.value;
-            if (!_inputValue) return;
+            if (!_inputValue) return alert("Type a name for the item!");
             let _item = new Item(_inputValue, null, getBoardFromId(this.parentBoardId).uniqueID(), this.id);
             this.addItem(_item);
             _newInput.value = '';
@@ -633,8 +635,8 @@ function loadData() {
         // Generate the board.
         renderBoard(appData.boards[appData.currentBoard]);
     } else {
-        let defaultBoard = new Board("Untitled Board", 'b0', {'theme': null});
-        appData.boards.push(defaultBoard);
+        let _defaultBoard = new Board("Untitled Board", 'b0', {'theme': null});
+        appData.boards.push(_defaultBoard);
     }
     listBoards();
 }
@@ -659,6 +661,20 @@ e_addBoardText.addEventListener('keyup', (e) => {
 e_addBoardButton.addEventListener('click', addBoard);
 
 e_saveButton.addEventListener('click', saveData);
+
+e_deleteButton.addEventListener('click', () => {
+    // Delete the current board.
+    appData.boards.pop(appData.currentBoard);
+    if (appData.boards.length === 0) {
+        let _defaultBoard = new Board("Untitled Board", 'b0', {'theme': null});
+        appData.boards.push(_defaultBoard);
+        appData.currentBoard = 0;
+    } else {
+        appData.currentBoard--;
+    }
+    listBoards();
+    renderBoard(appData.boards[0]);
+});
 
 /* <=================================== Sidebar ===================================> */
 function toggleSidebar() {

@@ -34,12 +34,13 @@ npm run serve
 - ~~Add persistent local storage.~~
 - ~~Allow item names to be edited.~~
 - ~~Allow the user to create multiple boards.~~
-- Add card settings context menu.
-- Replace normal alerts with dynamic pop up alerts.
-- Allow items to hold images.
-    - Delete
+- ~~Add card settings context menu.~~
+    - ~~Delete~~
+    - ~~Clear~~
     - Duplicate
     - Move (to another board)
+- Replace normal alerts with dynamic pop up alerts.
+- Allow items to hold images.
 - Add a settings menu.
     - Add different themes to choose from.
     - Allow the user to enable or disable data persistence.

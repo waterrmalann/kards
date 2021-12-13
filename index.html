@@ -24,9 +24,9 @@
     <body>
         <header>
             <div class="header-flex">
-                <span id="sidebar-button" style="font-size:30px;cursor:pointer">&#9776;</span>
+                <span id="sidebar-button" style="font-size:25px;cursor:pointer">&#9776;</span>
                 <h1 id="title" class="text-align-center">Kards</h1>
-                <span style="font-size:30px;cursor:pointer;letter-spacing: 1ch;">
+                <span style="font-size:25px;cursor:pointer;letter-spacing: 1ch;">
                     <i title="Delete this board." id="delete-button" class="fa fa-trash"></i>
                     <i title="Save all boards." id="save-button" class="fa fa-floppy-o"></i>
                     <i title="Settings" id="settings-button" class="fa fa-gear"></i>
@@ -46,6 +46,15 @@
                 <input type="text" id="add-board-text" name="add-board" placeholder="Add Board...">
                 <button id="add-board-button">Add Board</button>
             </div>
+        </div>
+
+        <div id="card-context-menu" class="context-menu">
+            <!-- Right-click context menu on cards. -->
+            <ul>
+                <li id="card-context-menu-delete">Delete</li>
+                <li id="card-context-menu-clear">Clear</li>
+                <li id="card-context-menu-duplicate">Duplicate</li>
+            </ul>
         </div>
 
         <div class="container" id="main-container">

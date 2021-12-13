@@ -24,6 +24,11 @@ const e_saveButton = document.getElementById('save-button');
 const e_settingsButton = document.getElementById('settings-button');
 const e_deleteButton = document.getElementById('delete-button');
 
+const e_cardContextMenu = document.getElementById('card-context-menu');
+const e_cardContextMenuDelete = document.getElementById('card-context-menu-delete');
+const e_cardContextMenuClear = document.getElementById('card-context-menu-clear');
+const e_cardContextMenuDuplicate = document.getElementById('card-context-menu-duplicate');
+
 const e_title = document.getElementById('title');
 
 var appData = {
@@ -120,7 +125,7 @@ function renderBoard(board) {
     document.title = 'Kards | ' + currentBoard().name;
     e_title.innerText = currentBoard().name;
     //e_title.addEventListener('click'), allow editing board name
-    // TODO: set theme
+    // To-Do: set theme
     renderCards();
 }
 
@@ -362,6 +367,7 @@ class Card {
         _newCardHeaderMenu.classList.add("fa", "fa-bars");
         _newCardHeader.append(_newCardHeaderTitle);
         _newCardHeader.append(_newCardHeaderMenu);
+        _newCardHeaderMenu.addEventListener('click', cardContextMenu_show);
 
         // Input area for typing in the name of new tasks for the card.
         let _newInput = document.createElement('input');
@@ -595,6 +601,58 @@ e_mainContainer.addEventListener('mousedown', scroll_startDragging, false);
 e_mainContainer.addEventListener('mouseup', scroll_stopDragging, false);
 e_mainContainer.addEventListener('mouseleave', scroll_stopDragging, false);
 
+
+/* <=================================== Card Context Menu ===================================> */
+
+
+let cardContextMenu_currentCard;
+const cardContextMenu_show = (e) => {
+
+    cardContextMenu_currentCard = getMouseOverCard();
+
+    // To-Do: Change the coords of the context menu to card button's exact coordinates.
+    // Use cardElement.getBoundingClientRect(); or something like that...
+    // Also, prevent the context menu from going out of bounds by normalizing the coordinates.
+    const { clientX: mouseX, clientY: mouseY } = e;
+    e_cardContextMenu.style.top = mouseY + 'px';
+    e_cardContextMenu.style.left = mouseX + 'px';
+
+    e_cardContextMenu.classList.remove('visible');
+    setTimeout(() => {
+        e_cardContextMenu.classList.add('visible');
+    });
+
+};
+
+const cardContextMenu_hide = (e) => {
+    // As long as the user isn't clicking on a context menu, we can hide it.
+    if (e.target.offsetParent != e_cardContextMenu && e_cardContextMenu.classList.contains('visible')) {
+        e_cardContextMenu.classList.remove("visible");
+    }
+};
+
+const cardContextMenu_clearCard = () => {
+    let _currentCardObject = getCardFromElement(cardContextMenu_currentCard);
+
+    _currentCardObject.items.length = 0;
+    renderCards();
+};
+
+const cardContextMenu_deleteCard = () => {
+    let _currentCardObject = getCardFromElement(cardContextMenu_currentCard);
+
+    // Remove the card from the cards list based on its index position.
+    currentCards().splice(currentCards().indexOf(_currentCardObject), 1);
+    cardContextMenu_hide({target:{offsetParent:'n/a'}}); // this is really stupid but it works, LoL
+
+    renderCards();
+}
+
+
+document.body.addEventListener('click', cardContextMenu_hide);
+e_cardContextMenuClear.addEventListener('click', cardContextMenu_clearCard);
+e_cardContextMenuDelete.addEventListener('click', cardContextMenu_deleteCard);
+
 /* <=================================== Persistent Data Storage ===================================> */
 function saveData() {
     window.localStorage.setItem('appData', JSON.stringify(appData));
@@ -660,9 +718,13 @@ e_addBoardText.addEventListener('keyup', (e) => {
 
 e_addBoardButton.addEventListener('click', addBoard);
 
-e_saveButton.addEventListener('click', saveData);
+//e_saveButton.addEventListener('click', saveData);
+e_saveButton.addEventListener('click', () => {saveData(); alert("Data successfully saved.")});
 
 e_deleteButton.addEventListener('click', () => {
+
+    let _boardName = currentBoard().name;
+
     // Delete the current board.
     appData.boards.pop(appData.currentBoard);
     if (appData.boards.length === 0) {
@@ -674,6 +736,8 @@ e_deleteButton.addEventListener('click', () => {
     }
     listBoards();
     renderBoard(appData.boards[0]);
+
+    alert(`Deleted board "${_boardName}"`)
 });
 
 /* <=================================== Sidebar ===================================> */

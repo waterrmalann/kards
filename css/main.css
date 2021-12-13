@@ -121,9 +121,9 @@ body {
     flex-shrink: 0;
     padding: 1rem 0.5rem;
     background-color: #d9dfe9;
-    border-radius: 0.5rem;
-    width: 20rem;
-    box-shadow: 2px 5px rgba(107, 107, 107, 0.63);
+    border-radius: 0.3rem;
+    width: 18.5rem;
+    box-shadow: 3px 3px 3px rgba(17, 17, 17, 0.150);
 }
 
 .card-title {
@@ -143,7 +143,7 @@ body {
 
 .parent-card > span {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
     justify-content: space-between;
     align-items: center;
 }
@@ -165,7 +165,7 @@ body {
     letter-spacing: 0.7rem;
 }
 
-.fa:hover {
+.fa:hover, #sidebar-button:hover {
     cursor: pointer;
     color: var(--primary-color-light);
 }
@@ -263,7 +263,7 @@ header {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    padding-block: 0.5rem;
+    padding-block: 0.1rem;
     margin-bottom: 1rem;
 }
 
@@ -273,3 +273,41 @@ header {
     flex-direction: column;
     gap: 0.5rem;
 }
+
+/* Context Menu */
+
+.context-menu {
+    background: #ebebeb;
+    border-radius: 0.2rem;
+    box-shadow: 1px 1px 5px rgba(17, 17, 17, 0.200);
+
+    position: fixed;
+    z-index: 15;
+    width: 150px;
+    display: none;
+
+    transform: scale(0);
+    transform-origin: top left;
+}
+
+.context-menu.visible {
+    display: block;
+    transform: scale(1);
+    transition: transform 200ms ease-in-out;
+}
+
+.context-menu ul li {
+    cursor: pointer;
+    padding-inline: 0.5rem;
+    padding-block: 0.2rem;
+}
+
+.context-menu ul li:hover {
+    background:#d9d9d9;
+}
+
+.context-menu ul {
+    list-style-type: none;
+    padding: 0;
+}
+

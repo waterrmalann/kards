@@ -726,7 +726,7 @@ e_deleteButton.addEventListener('click', () => {
     let _boardName = currentBoard().name;
 
     // Delete the current board.
-    appData.boards.pop(appData.currentBoard);
+    appData.boards.splice(appData.currentBoard, 1);
     if (appData.boards.length === 0) {
         let _defaultBoard = new Board("Untitled Board", 'b0', {'theme': null});
         appData.boards.push(_defaultBoard);

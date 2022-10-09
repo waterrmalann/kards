@@ -655,11 +655,11 @@ e_cardContextMenuDelete.addEventListener('click', cardContextMenu_deleteCard);
 
 /* <=================================== Persistent Data Storage ===================================> */
 function saveData() {
-    window.localStorage.setItem('appData', JSON.stringify(appData));
+    window.localStorage.setItem('kards-appData', JSON.stringify(appData));
 }
 
 function loadData() {
-    let _data = window.localStorage.getItem('appData');
+    let _data = window.localStorage.getItem('kards-appData');
     if (_data) {
         let _appData = JSON.parse(_data);
 

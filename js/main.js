@@ -648,10 +648,23 @@ const cardContextMenu_deleteCard = () => {
     renderCards();
 }
 
+const cardContextMenu_duplicateCard = () => {
+    let _currentCardObject = getCardFromElement(cardContextMenu_currentCard);
+
+    currentBoard().addCard();
+
+    let _cIndex = currentBoard().cards.length - 1;
+    currentBoard().cards[_cIndex].items = _currentCardObject.items;
+    currentBoard().cards[_cIndex].name = _currentCardObject.name + ' Copy';
+
+    renderCards();
+}
+
 
 document.body.addEventListener('click', cardContextMenu_hide);
 e_cardContextMenuClear.addEventListener('click', cardContextMenu_clearCard);
 e_cardContextMenuDelete.addEventListener('click', cardContextMenu_deleteCard);
+e_cardContextMenuDuplicate.addEventListener('click', cardContextMenu_duplicateCard);
 
 /* <=================================== Persistent Data Storage ===================================> */
 function saveData() {

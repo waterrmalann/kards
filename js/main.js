@@ -126,10 +126,10 @@ function renderBoard(board) {
     e_title.innerText = currentBoard().name;
     //e_title.addEventListener('click'), allow editing board name
     // To-Do: set theme
-    renderCards();
+    renderAllCards();
 }
 
-function renderCards() {
+function renderAllCards() {
     /* Refreshes the whole cards container. */
 
     for (let _card of e_cardsContainer.querySelectorAll('.parent-card')) {
@@ -137,14 +137,42 @@ function renderCards() {
         // Remove all the cards from the cards container.
         _card.remove();
     }
+
     for (let _card of currentCards()) {
         // Regenerate each card.
-        let _generated = _card.renderCard();
+        let _generated = _card.generateElement();
         // Put them in the container right before the last child (text box for new card).
         e_cardsContainer.insertBefore(_generated, e_cardsContainer.childNodes[e_cardsContainer.childNodes.length - 2]);
         // Update the card for event listeners and etc...
         _card.update();
     }
+}
+
+function renderCard(cardID) {
+    let _card = currentCards().find(e => e.id === cardID);
+
+    if (!_card) {
+        // If card no longer exists in data. (ie: deleted but still rendered in DOM)
+        // Remove it from the DOM
+        let _currentCardElement = document.getElementById(cardID);
+        _currentCardElement.parentNode.removeChild(_currentCardElement);
+        return;
+    }
+
+    // Get current card element if it exists.
+    let _currentCardElement = document.getElementById(_card.id);
+    if (_currentCardElement != null) {
+        let _generated = _card.generateElement();
+        // Replace the card from the container.
+        _currentCardElement.parentNode.replaceChild(_generated, _currentCardElement);
+    } else {
+        let _generated = _card.generateElement();
+        // Put them in the container right before the last child (text box for new card).
+        e_cardsContainer.insertBefore(_generated, e_cardsContainer.childNodes[e_cardsContainer.childNodes.length - 2]);
+    }
+
+    // Update the event listeners.
+    _card.update();
 }
 
 function toggleHoverStyle(show) {
@@ -238,12 +266,12 @@ class Card {
 
     addItem(item) {
         this.items.push(item);
-        renderCards();
+        renderCard(this.id);
     }
 
     removeItem(item) {
         this.items = this.items.filter(val => val !== item);
-        renderCards();
+        renderCard(this.id);
     }
 
     update() {
@@ -282,7 +310,7 @@ class Card {
 
                 let _save = () => {
                     _item.title = _input.value;
-                    renderCards();
+                    renderCard(this.id);
                 };
 
                 _input.addEventListener('blur', _save, {
@@ -312,7 +340,7 @@ class Card {
         return _newItemList;
     }
 
-    renderCard() {
+    generateElement() {
 
         /* The structure of the card element. */
 
@@ -351,7 +379,7 @@ class Card {
 
             let _save = () => {
                 this.name = _input.value;
-                renderCards();
+                renderCard(this.id);
             };
 
             _input.addEventListener('blur', _save, {
@@ -442,7 +470,7 @@ class Board {
         let _card = new Card(_cardTitle, this.uniqueID(), this.id);
         this.cards.push(_card);
 
-        let _newCard = _card.renderCard();
+        let _newCard = _card.generateElement();
         e_cardsContainer.insertBefore(_newCard, e_cardsContainer.childNodes[e_cardsContainer.childNodes.length - 2]);
     }
 }
@@ -517,6 +545,9 @@ const cardDrag_stopDragging = (e) => {
                     _hoverCardObject.items.move(_hoverCardObject.items.indexOf(_heldItemObject), _hoverCardObject.items.indexOf(_hoverItemObject));
                 }
             }
+
+            renderCard(_heldItemObject.getParentCard().id);
+
         } else {
             // If the card the mouse is over is not the same as the parent card of the item being held.
             // The user also gets the the ability to displace an item from the different card.
@@ -554,8 +585,13 @@ const cardDrag_stopDragging = (e) => {
                 // Give the held item a new parent card id.
                 _heldItemObject.parentCardId = _hoverCardObject.id;
             }
+
+            renderCard(_hoverCardObject.id);
+            renderCard(_heldItemObject.getParentCard().id);
         }
-        renderCards();
+        // renderAllCards();
+        // renderCard(originCard);
+        // renderCard(targetCard);
     }
     cardDrag_mouseDown = false;
     cardDrag_mouseDownOn.style.position = 'static';
@@ -635,7 +671,7 @@ const cardContextMenu_clearCard = () => {
     let _currentCardObject = getCardFromElement(cardContextMenu_currentCard);
 
     _currentCardObject.items.length = 0;
-    renderCards();
+    renderCard(_currentCardObject.id);
 };
 
 const cardContextMenu_deleteCard = () => {
@@ -645,7 +681,7 @@ const cardContextMenu_deleteCard = () => {
     currentCards().splice(currentCards().indexOf(_currentCardObject), 1);
     cardContextMenu_hide({target:{offsetParent:'n/a'}}); // this is really stupid but it works, LoL
 
-    renderCards();
+    renderCard(_currentCardObject.id);
 }
 
 const cardContextMenu_duplicateCard = () => {
@@ -657,7 +693,7 @@ const cardContextMenu_duplicateCard = () => {
     currentBoard().cards[_cIndex].items = _currentCardObject.items;
     currentBoard().cards[_cIndex].name = _currentCardObject.name + ' Copy';
 
-    renderCards();
+    renderCard(_currentCardObject.id);
 }
 
 

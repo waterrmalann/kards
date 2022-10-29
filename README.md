@@ -29,30 +29,9 @@ npm run serve
 
 ---
 
-### To-Do
-
-- ~~Add persistent local storage.~~
-- ~~Allow item names to be edited.~~
-- ~~Allow the user to create multiple boards.~~
-- ~~Add card settings context menu.~~
-    - ~~Delete~~
-    - ~~Clear~~
-    - Duplicate
-    - Move (to another board)
-- Replace normal alerts with dynamic pop up alerts.
-- Allow items to hold images.
-- Add a settings menu.
-    - Add different themes to choose from.
-    - Allow the user to enable or disable data persistence.
-    - Allow the user to download the board as `.csv` or `.json`.
-    - Allow the user to load a `.csv` or `.json` file.
-- Organize and improve the code.
-- Performance optimizations.
-- Allow the cards to keep more information like description and checklists.
-
 ### Contribution
 
-Contributions are always accepted. Feel free to open a pull request to fix any issues or to make improvements you think that should be made. You could also help me with the to-do list above. Any contribution will be accepted as long as it doesn't stray too much from the objective of the app. If you're in doubt about whether the PR would be accepted or not, you can always open an issue to get my opinion on it.
+Contributions are always accepted. Feel free to open a pull request to fix any issues or to make improvements you think that should be made. Any contribution will be accepted as long as it doesn't stray too much from the objective of the app. If you're in doubt about whether the PR would be accepted or not, you can always open an issue to get my opinion on it.
 
 License
 ----

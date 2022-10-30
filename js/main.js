@@ -29,6 +29,8 @@ const e_cardContextMenuDelete = document.getElementById('card-context-menu-delet
 const e_cardContextMenuClear = document.getElementById('card-context-menu-clear');
 const e_cardContextMenuDuplicate = document.getElementById('card-context-menu-duplicate');
 
+const e_alerts = document.getElementById('alerts');
+
 const e_title = document.getElementById('title');
 
 var appData = {
@@ -201,8 +203,8 @@ function addBoard() {
     /* Adds a new board based on the input in the sidebar. */
 
     let _boardTitle = e_addBoardText.value;
-    if (!_boardTitle) return alert("Type a name for the board!");  // We don't create a board if it has no name.
-    if (appData.boards.length >= 512) return alert("Max limit for boards reached.")  // or if there are already too many boards
+    if (!_boardTitle) return createAlert("Type a name for the board!");  // We don't create a board if it has no name.
+    if (appData.boards.length >= 512) return createAlert("Max limit for boards reached.")  // or if there are already too many boards
     e_addBoardText.value = '';
 
     let _newBoard = new Board(_boardTitle, uniqueID(), {'theme': null});
@@ -415,7 +417,7 @@ class Card {
         _newButton.innerText = '+';
         _newButton.addEventListener('click', () => {
             let _inputValue = _newInput.value;
-            if (!_inputValue) return alert("Type a name for the item!");
+            if (!_inputValue) return createAlert("Type a name for the item!");
             let _item = new Item(_inputValue, null, getBoardFromId(this.parentBoardId).uniqueID(), this.id);
             this.addItem(_item);
             _newInput.value = '';
@@ -768,7 +770,7 @@ e_addBoardText.addEventListener('keyup', (e) => {
 e_addBoardButton.addEventListener('click', addBoard);
 
 //e_saveButton.addEventListener('click', saveData);
-e_saveButton.addEventListener('click', () => {saveData(); alert("Data successfully saved.")});
+e_saveButton.addEventListener('click', () => {saveData(); createAlert("Data successfully saved.")});
 
 e_deleteButton.addEventListener('click', () => {
 
@@ -786,7 +788,7 @@ e_deleteButton.addEventListener('click', () => {
     listBoards();
     renderBoard(appData.boards[0]);
 
-    alert(`Deleted board "${_boardName}"`)
+    createAlert(`Deleted board "${_boardName}"`)
 });
 
 /* <=================================== Sidebar ===================================> */
@@ -802,3 +804,18 @@ function toggleSidebar() {
 
 e_sidebarButton.addEventListener('click', toggleSidebar);
 e_sidebarClose.addEventListener('click', toggleSidebar);
+
+/* Alerts */
+
+function createAlert(text) {
+    let _e = document.createElement('div');
+    let _p = document.createElement('p');
+    _p.innerText = text;
+    _e.classList.add('alert');
+    _e.appendChild(_p);
+
+    e_alerts.appendChild(_e);
+    setTimeout(function(){
+        _e.parentNode.removeChild(_e);
+    }, 3500);
+}

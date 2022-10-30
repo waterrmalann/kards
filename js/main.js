@@ -793,7 +793,6 @@ e_deleteButton.addEventListener('click', () => {
 
 /* <=================================== Sidebar ===================================> */
 function toggleSidebar() {
-    console.log("malik", 123);
     if (('toggled' in e_sidebar.dataset)) {
         delete e_sidebar.dataset.toggled;
         e_sidebar.style.width = "0";

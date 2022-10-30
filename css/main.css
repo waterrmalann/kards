@@ -31,7 +31,7 @@ html {
 
 body {
     background-color: var(--primary-color);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     height: 100%;
     margin: 0;
     overflow-y: hidden; /* Hide vertical scrollbar */
@@ -46,7 +46,7 @@ body {
     left: 0;
     background-color: #233138;
     overflow-x: hidden;
-    transition: 0.5s;
+    transition: width 0.5s;
     padding-top: 4rem;
 }
 
@@ -105,8 +105,8 @@ body {
 .container {
     width: min(99%, 90.5rem);
     margin-inline: auto;
-    overflow-x: scroll;
-    min-height: 85%;
+    overflow-x: auto;
+    min-height: 95vh;
 }
 
 #cards-container {
@@ -165,9 +165,23 @@ body {
     letter-spacing: 0.7rem;
 }
 
+.fa {
+    width: 2rem;
+    height: 2rem;
+    display: block;
+    left: 50%;
+    font-size: 1.4rem !important;
+    padding-left: 0.45rem;
+    padding-top: 0.25rem;
+}
+
 .fa:hover, #sidebar-button:hover {
     cursor: pointer;
     color: var(--primary-color-light);
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 35px;
+    height: 2rem;
+    width: 2rem;
 }
 
 .parent-card > ul > li > p {
@@ -199,6 +213,7 @@ input[type="text"] {
     border: none;
     border-bottom: 2px solid black;
     font-size: 1em;
+    width: 15rem;
     background-color: transparent;
 }
 
@@ -248,6 +263,7 @@ input[type="text"]:focus {
     color: white;
     padding: 0.2em 0.5em;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 .plus-button:hover {

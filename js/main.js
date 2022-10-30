@@ -793,12 +793,22 @@ e_deleteButton.addEventListener('click', () => {
 
 /* <=================================== Sidebar ===================================> */
 function toggleSidebar() {
+    console.log("malik", 123);
     if (('toggled' in e_sidebar.dataset)) {
         delete e_sidebar.dataset.toggled;
         e_sidebar.style.width = "0";
+        e_sidebar.style.boxShadow = "unset";
+
+        // Remove listen click outside of side
+        document.removeEventListener('click', listenClickOutside);
     } else {
         e_sidebar.dataset.toggled = '';
         e_sidebar.style.width = "250px";
+        e_sidebar.style.boxShadow = "100px 100px 0 100vw rgb(0 0 0 / 50%)";
+        // Listen click outside of sidebar
+        setTimeout(() => {
+            document.addEventListener('click', listenClickOutside);
+        }, 300);
     }
 }
 
@@ -818,4 +828,12 @@ function createAlert(text) {
     setTimeout(function(){
         _e.parentNode.removeChild(_e);
     }, 3500);
+}
+
+function listenClickOutside(event) {
+    const withinBoundaries = event.composedPath().includes(e_sidebar);
+    if (!withinBoundaries && e_sidebar.style.width === "250px") {
+        console.log(123)
+        toggleSidebar();
+    }
 }

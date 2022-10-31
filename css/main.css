@@ -106,7 +106,7 @@ body {
     width: min(99%, 90.5rem);
     margin-inline: auto;
     overflow-x: auto;
-    min-height: 95vh;
+    min-height: 93vh;
 }
 
 #cards-container {
@@ -166,22 +166,13 @@ body {
 }
 
 .fa {
-    width: 2rem;
-    height: 2rem;
     display: block;
     left: 50%;
-    font-size: 1.4rem !important;
-    padding-left: 0.45rem;
-    padding-top: 0.25rem;
 }
 
 .fa:hover, #sidebar-button:hover {
     cursor: pointer;
     color: var(--primary-color-light);
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 35px;
-    height: 2rem;
-    width: 2rem;
 }
 
 .parent-card > ul > li > p {

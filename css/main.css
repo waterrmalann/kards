@@ -106,7 +106,7 @@ body {
     width: min(99%, 90.5rem);
     margin-inline: auto;
     overflow-x: auto;
-    min-height: 93vh;
+    min-height: 85%;
 }
 
 #cards-container {

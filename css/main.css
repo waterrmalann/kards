@@ -340,4 +340,11 @@ header {
     padding-inline: 2rem;
     border-left: 5px solid red;
     border-radius: 0.5rem;
+    box-shadow: 2px 2px 5px rgba(107, 107, 107, 0.63);
+}
+
+.animate-hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.35s, opacity 0.35s linear;
 }

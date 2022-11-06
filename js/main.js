@@ -20,6 +20,7 @@ const e_boardsList = document.getElementById('boards-list');
 const e_addBoardText = document.getElementById('add-board-text');
 const e_addBoardButton = document.getElementById('add-board-button');
 
+const e_autoSaveButton = document.getElementById('auto-save');
 const e_saveButton = document.getElementById('save-button');
 const e_settingsButton = document.getElementById('settings-button');
 const e_deleteButton = document.getElementById('delete-button');
@@ -32,6 +33,11 @@ const e_cardContextMenuDuplicate = document.getElementById('card-context-menu-du
 const e_alerts = document.getElementById('alerts');
 
 const e_title = document.getElementById('title');
+
+// Auto save enabled as default
+let autoSaveInternalId = setInterval(function (){
+    saveData();
+}, 5000);
 
 var appData = {
     'boards': [],
@@ -773,6 +779,15 @@ e_addBoardText.addEventListener('keyup', (e) => {
 
 e_addBoardButton.addEventListener('click', addBoard);
 
+e_autoSaveButton.addEventListener('change',  function (event) {
+    if (this.checked) {
+        autoSaveInternalId = setInterval(function (){
+            saveData();
+        }, 5000);
+    } else {
+        window.clearInterval(autoSaveInternalId);
+    }
+})
 //e_saveButton.addEventListener('click', saveData);
 e_saveButton.addEventListener('click', () => {saveData(); createAlert("Data successfully saved.")});
 

@@ -699,7 +699,7 @@ const cardContextMenu_duplicateCard = () => {
     currentBoard().cards[_cIndex].items = _currentCardObject.items;
     currentBoard().cards[_cIndex].name = _currentCardObject.name + ' Copy';
 
-    renderCard(_currentCardObject.id);
+    renderCard(currentBoard().cards[_cIndex].id);
 }
 
 
@@ -857,7 +857,7 @@ function createConfirmDialog(text, onConfirm) {
 
     _modal.style.display = "block";
     _dialogText.textContent = text;
-    
+
     _span.onclick = function() {
         _modal.style.display = "none";
     }

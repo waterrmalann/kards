@@ -838,33 +838,42 @@ function createAlert(text) {
 }
 
 function listenClickOutside(event) {
-    const withinBoundaries = event.composedPath().includes(e_sidebar);
-    if (!withinBoundaries && e_sidebar.style.width === "250px") {
+    const _withinBoundaries = event.composedPath().includes(e_sidebar);
+    if (!_withinBoundaries && e_sidebar.style.width === "250px") {
         toggleSidebar();
     }
 }
 
 function createConfirmDialog(text, onConfirm) {
-    var modal = document.getElementById("confirm-dialog");
-    modal.style.display = "block";
-    var span = document.getElementById("confirm-dialog-close");
-    span.onclick = function() {
-        modal.style.display = "none";
+
+    // Hide any context menus that might be open.
+    cardContextMenu_hide({target:{offsetParent:'n/a'}});
+
+    var _modal = document.getElementById("confirm-dialog");
+    var _span = document.getElementById("confirm-dialog-close");
+    var _dialogText = document.getElementById('confirm-dialog-text');
+    var _cancelButton = document.getElementById('confirm-dialog-cancel');
+    var _confirmButton = document.getElementById('confirm-dialog-confirm');
+
+    _modal.style.display = "block";
+    _dialogText.textContent = text;
+    
+    _span.onclick = function() {
+        _modal.style.display = "none";
     }
-    var dialogText = document.getElementById('confirm-dialog-text');
-    dialogText.textContent = text;
-    var cancelButton = document.getElementById('confirm-dialog-cancel');
-    var confirmButton = document.getElementById('confirm-dialog-confirm');
-    cancelButton.onclick = () => {
-        modal.style.display = "none";
+    
+    _cancelButton.onclick = () => {
+        _modal.style.display = "none";
     }
-    confirmButton.onclick = () => {
-        modal.style.display = "none";
+
+    _confirmButton.onclick = () => {
+        _modal.style.display = "none";
         onConfirm && onConfirm();
     }
+
     window.onclick = (event) => {
-        if (event.target === modal) {
-            modal.style.display = "none";
+        if (event.target === _modal) {
+            _modal.style.display = "none";
         }
     }
 }

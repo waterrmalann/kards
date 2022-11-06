@@ -326,7 +326,7 @@ class Card {
             _newItemDeleteButton.ariaHidden = true;
             _newItemDeleteButton.classList.add('fa', 'fa-trash');
             _newItemDeleteButton.addEventListener('click', () => {
-                this.removeItem(_item);
+                createConfirmDialog("Are you sure to delete this task?", () => this.removeItem(_item));
             });
 
             // Add both the buttons to the span tag.
@@ -670,20 +670,24 @@ const cardContextMenu_hide = (e) => {
 };
 
 const cardContextMenu_clearCard = () => {
-    let _currentCardObject = getCardFromElement(cardContextMenu_currentCard);
+    createConfirmDialog('Are you sure to clear this board', () => {
+        let _currentCardObject = getCardFromElement(cardContextMenu_currentCard);
 
-    _currentCardObject.items.length = 0;
-    renderCard(_currentCardObject.id);
+        _currentCardObject.items.length = 0;
+        renderCard(_currentCardObject.id);
+    });
 };
 
 const cardContextMenu_deleteCard = () => {
-    let _currentCardObject = getCardFromElement(cardContextMenu_currentCard);
+    createConfirmDialog('Are you sure to delete this card', () => {
+        let _currentCardObject = getCardFromElement(cardContextMenu_currentCard);
 
-    // Remove the card from the cards list based on its index position.
-    currentCards().splice(currentCards().indexOf(_currentCardObject), 1);
-    cardContextMenu_hide({target:{offsetParent:'n/a'}}); // this is really stupid but it works, LoL
+        // Remove the card from the cards list based on its index position.
+        currentCards().splice(currentCards().indexOf(_currentCardObject), 1);
+        cardContextMenu_hide({target:{offsetParent:'n/a'}}); // this is really stupid but it works, LoL
 
-    renderCard(_currentCardObject.id);
+        renderCard(_currentCardObject.id);
+    });
 }
 
 const cardContextMenu_duplicateCard = () => {
@@ -773,22 +777,23 @@ e_addBoardButton.addEventListener('click', addBoard);
 e_saveButton.addEventListener('click', () => {saveData(); createAlert("Data successfully saved.")});
 
 e_deleteButton.addEventListener('click', () => {
+    createConfirmDialog('Are you sure to delete this board?', () => {
+        let _boardName = currentBoard().name;
 
-    let _boardName = currentBoard().name;
+        // Delete the current board.
+        appData.boards.splice(appData.currentBoard, 1);
+        if (appData.boards.length === 0) {
+            let _defaultBoard = new Board("Untitled Board", 'b0', {'theme': null});
+            appData.boards.push(_defaultBoard);
+            appData.currentBoard = 0;
+        } else {
+            appData.currentBoard--;
+        }
+        listBoards();
+        renderBoard(appData.boards[0]);
 
-    // Delete the current board.
-    appData.boards.splice(appData.currentBoard, 1);
-    if (appData.boards.length === 0) {
-        let _defaultBoard = new Board("Untitled Board", 'b0', {'theme': null});
-        appData.boards.push(_defaultBoard);
-        appData.currentBoard = 0;
-    } else {
-        appData.currentBoard--;
-    }
-    listBoards();
-    renderBoard(appData.boards[0]);
-
-    createAlert(`Deleted board "${_boardName}"`)
+        createAlert(`Deleted board "${_boardName}"`)
+    });
 });
 
 /* <=================================== Sidebar ===================================> */
@@ -836,5 +841,30 @@ function listenClickOutside(event) {
     const withinBoundaries = event.composedPath().includes(e_sidebar);
     if (!withinBoundaries && e_sidebar.style.width === "250px") {
         toggleSidebar();
+    }
+}
+
+function createConfirmDialog(text, onConfirm) {
+    var modal = document.getElementById("confirm-dialog");
+    modal.style.display = "block";
+    var span = document.getElementById("confirm-dialog-close");
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    var dialogText = document.getElementById('confirm-dialog-text');
+    dialogText.textContent = text;
+    var cancelButton = document.getElementById('confirm-dialog-cancel');
+    var confirmButton = document.getElementById('confirm-dialog-confirm');
+    cancelButton.onclick = () => {
+        modal.style.display = "none";
+    }
+    confirmButton.onclick = () => {
+        modal.style.display = "none";
+        onConfirm && onConfirm();
+    }
+    window.onclick = (event) => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
     }
 }

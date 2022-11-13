@@ -719,6 +719,10 @@ function saveData() {
     window.localStorage.setItem('kards-appData', JSON.stringify(appData));
 }
 
+function getDataFromLocalStorage() {
+    return window.localStorage.getItem('kards-appData');
+}
+
 function loadData() {
     let _data = window.localStorage.getItem('kards-appData');
     if (_data) {
@@ -811,6 +815,11 @@ e_deleteButton.addEventListener('click', () => {
     });
 });
 
+window.onbeforeunload = function () {
+    if (JSON.stringify(appData) !== getDataFromLocalStorage()) {
+        return confirm();
+    }
+}
 /* <=================================== Sidebar ===================================> */
 function toggleSidebar() {
     if (('toggled' in e_sidebar.dataset)) {

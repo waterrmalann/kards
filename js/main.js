@@ -460,7 +460,7 @@ class Board {
         this.id = id;
         this.settings = settings;
         this.cards = [];  // All the cards that are currently in the container as Card objects.
-        this.identifier = identifier;  // All elements within this board will carry an unqiue id.
+        this.identifier = identifier === null ? Date.now() : identifier;  // All elements within this board will carry an unqiue id.
     }
 
     uniqueID() {
@@ -731,8 +731,8 @@ function loadData() {
         // Since JSON doesn't store functions and such.
         // We'll have to reinitailize the classes with the loaded data.
         appData.settings = _appData.settings;
-        appData.currentBoard = _appData.currentBoard;
-        appData.identifier = _appData.identifier;
+        appData.currentBoard = _appData.currentBoard >= 0 ? appData.currentBoard : 0;
+        appData.identifier = _appData.identifier !== null ? appData.identifier : 0;
         
         // Fill the data with boards.
         for (let _board of _appData.boards) {
@@ -758,6 +758,7 @@ function loadData() {
         // Generate the board.
         renderBoard(appData.boards[appData.currentBoard]);
     } else {
+        appData.currentBoard = 0;
         let _defaultBoard = new Board("Untitled Board", 'b0', {'theme': null});
         appData.boards.push(_defaultBoard);
     }
@@ -801,15 +802,18 @@ e_deleteButton.addEventListener('click', () => {
 
         // Delete the current board.
         appData.boards.splice(appData.currentBoard, 1);
+        if (appData.currentBoard !== 0) {
+            appData.currentBoard--;
+        }
+
         if (appData.boards.length === 0) {
             let _defaultBoard = new Board("Untitled Board", 'b0', {'theme': null});
             appData.boards.push(_defaultBoard);
             appData.currentBoard = 0;
-        } else {
-            appData.currentBoard--;
         }
+
         listBoards();
-        renderBoard(appData.boards[0]);
+        renderBoard(appData.boards[appData.currentBoard]);
 
         createAlert(`Deleted board "${_boardName}"`)
     });

@@ -1,3 +1,4 @@
+
 :root {
     --primary-color-light: #008fe2;
     --primary-color: #0079bf;
@@ -194,10 +195,13 @@ body {
 }
 
 #title {
-    background-color: var(--primary-color-dark);
     color: white;
     margin: 0;
     font-weight: 600;
+
+    background-color: rgba(14, 14, 14, 0.15);
+    padding-inline: 1rem;
+    border-radius: 1rem;
 }
 
 input[type="text"] {
@@ -261,16 +265,12 @@ input[type="text"]:focus {
     background-color: var(--primary-color-light);
 }
 
-header {
-    background-color: var(--primary-color-dark);
-}
-
 .header-flex {
     margin-inline: 2%;
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    padding-block: 0.1rem;
+    padding-block: 0.75rem 0.1rem;
     margin-bottom: 1rem;
 }
 
@@ -416,11 +416,26 @@ header {
     color: var(--primary-color-dark);
 }
 
+#sidebar-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin:0;
+    background-color: rgba(14, 14, 14, 0.15);
+    padding-inline: 1rem;
+    border-radius: 1rem;
+}
+
 .title-actions-container {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
+
+    background-color: rgba(14, 14, 14, 0.15);
+    padding-inline: 1rem;
+    border-radius: 1rem;
 }
 
 .auto-save-text {

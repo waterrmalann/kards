@@ -140,6 +140,7 @@ body {
     overflow-y: auto;
     padding-left: 0;
     list-style: none;
+    scrollbar-gutter: stable;
 }
 
 .parent-card > span {
